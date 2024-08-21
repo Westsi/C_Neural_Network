@@ -16,3 +16,10 @@ int main() {
     printLayer(layer);
     freeAll();
 }
+
+/*
+https://www.kaggle.com/code/hojjatk/read-mnist-dataset
+https://www.kaggle.com/datasets/hojjatk/mnist-dataset
+https://www.bmc.com/blogs/neural-network-introduction/
+https://towardsdatascience.com/activation-functions-neural-networks-1cbd9f8d91d6
+*/
