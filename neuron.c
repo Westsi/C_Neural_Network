@@ -24,6 +24,7 @@ neuron_ptr newNeuron(activation_func_t act, int numInputs) {
     dest->value = 0;
     dest->weights = weightsarr;
     dest->inputs = numInputs;
+    dest->bias = 0;
 
     return dest;
 }

@@ -2,6 +2,7 @@
     "files.associations": {
         "neuron.h": "c",
         "stdlib.h": "c",
-        "time.h": "c"
+        "time.h": "c",
+        "activations.h": "c"
     }
 }
