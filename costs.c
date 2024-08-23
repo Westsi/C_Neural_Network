@@ -63,3 +63,50 @@ float huber(float* pred, float* actual, int size) {
     }
     return huber_mae_sum;
 }
+
+cost_deriv_t getCostDerivative(cost_func_t costfn) {
+    if (costfn == mse) {
+        return deriv_mse;
+    }
+    if (costfn == mae) {
+        return deriv_mae;
+    }
+    if (costfn == binary_cross_entropy) {
+        return deriv_binary_cross_entropy;
+    }
+    if (costfn == categorical_cross_entropy) {
+        return deriv_categorical_cross_entropy;
+    }
+    if (costfn == hinge) {
+        return deriv_hinge;
+    }
+    if (costfn == huber) {
+        return deriv_huber;
+    }
+    
+}
+
+float deriv_mse(float pred, float actual) {
+    float res = 2 * (pred - actual);
+    return res;
+}
+
+float deriv_mae(float pred, float actual) {
+
+}
+
+float deriv_binary_cross_entropy(float pred, float actual) {
+
+}
+
+float deriv_categorical_cross_entropy(float pred, float actual) {
+
+}
+
+float deriv_hinge(float pred, float actual) {
+
+}
+
+float deriv_huber(float pred, float actual) {
+
+}

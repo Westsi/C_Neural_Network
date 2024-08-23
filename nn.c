@@ -5,15 +5,29 @@
 #include "layer.h"
 #include "activations.h"
 #include "memtrack.h"
-
-void init_nn() {
-    srand((unsigned int)time(NULL));
-}
+#include "network.h"
 
 int main() {
-    init_nn();
-    layer_ptr layer = newLayer(sigmoid, 4, 4, HIDDEN_LAYER);
-    printLayer(layer);
+    initNN();
+    network_ptr network = newNetwork(newLayer(linear, -1, 2, INPUT_LAYER), 
+                                     newLayer(sigmoid, 1, 1, OUTPUT_LAYER), 
+                                     mse, 2, 
+                                     newLayer(sigmoid, 2, 2, HIDDEN_LAYER), 
+                                     newLayer(sigmoid, 2, 1, HIDDEN_LAYER));
+    printNetwork(network);
+    float inp[2] = {0.7, 0.3};
+    float y[1] = {0.8};
+    loadInputData(network->input, inp);
+    for (int i=0;i<100;i++) {
+        float* result = forwardPass(network);
+        for (int i=0;i<network->output->layerNeuronCnt;i++) {
+            printf("Neuron %d: %.3f", i, result[i]);
+        }
+        printf("\n");
+        printf("Cost: %.3f\n", network->cost(result, y, 1));
+        backprop(network, y[0]);
+    }
+
     freeAll();
 }
 
@@ -25,4 +39,6 @@ https://towardsdatascience.com/activation-functions-neural-networks-1cbd9f8d91d6
 
 https://eli.thegreenplace.net/2016/the-softmax-function-and-its-derivative/
 https://www.3blue1brown.com/lessons/backpropagation-calculus
+https://docs.google.com/spreadsheets/d/18xI9C0xsbqvYZvH9DR7gSCWTYc6LZt_YQ_LdsjrDu0o/edit?gid=0#gid=0
+https://pyimagesearch.com/2021/05/06/backpropagation-from-scratch-with-python/
 */

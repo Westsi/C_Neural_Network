@@ -5,7 +5,16 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-layer_ptr newLayer(activation_func_t act, int previousLayerNeurons, int layerNeurons, int layerType) {
+void* newLayer(activation_func_t act, int previousLayerNeurons, int layerNeurons, int layerType) {
+    if (layerType == INPUT_LAYER) {
+        input_layer_ptr dest = malloc(sizeof(input_layer_t));
+        registerAllocated(dest);
+        float* inpData = malloc(sizeof(float) * layerNeurons);
+        registerAllocated(inpData);
+        dest->layerCnt = layerNeurons;
+        dest->data = inpData;
+        return dest;
+    }
     layer_ptr dest = malloc(sizeof(layer_t));
     registerAllocated(dest);
     neuron_ptr* neurons = malloc(sizeof(neuron_ptr) * layerNeurons);
@@ -45,4 +54,33 @@ void printLayer(layer_ptr layer) {
     }
 
     printf("]\n");
+}
+
+void printInputLayer(input_layer_ptr layer) {
+    printf("Input layer with %d values. Values: [\n", layer->layerCnt);
+    for (int i=0;i<layer->layerCnt;i++) {
+        if (i == layer->layerCnt - 1) {
+            printf("\t%.2f\n", layer->data[i]);
+            continue;
+        }
+        printf("%.2f, ", layer->data[i]);
+    }
+    printf("]\n");
+}
+
+void loadInputData(input_layer_ptr inp, float* data) {
+    for (int i=0;i<inp->layerCnt;i++) {
+        inp->data[i] = data[i];
+    }
+}
+
+float* computeLayer(float* prevLayerData, layer_ptr layer) {
+    float* layervals = malloc(sizeof(float) * layer->layerNeuronCnt);
+    if (layer->layerType == OUTPUT_LAYER) {
+        registerAllocated(layervals); // only if output because otherwise freed in other function
+    }
+    for (int i=0;i<layer->layerNeuronCnt;i++) {
+        layervals[i] = calculateNeuronValue(layer->neurons[i], prevLayerData);
+    }
+    return layervals;
 }

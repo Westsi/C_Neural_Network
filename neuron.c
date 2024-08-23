@@ -30,16 +30,24 @@ neuron_ptr newNeuron(activation_func_t act, int numInputs) {
 }
 
 float calculateNeuronValue(neuron_ptr n, float* inputs) {
-    float v = 0;
+    float v = n->bias;
     for (int i=0;i<n->inputs;i++) {
         v += inputs[i] * n->weights[i];
     }
-    n->value = v;
-    return v;
+    n->calculatedInput = v;
+    float a = n->activation(v);
+    n->value = a;
+    return a;
 }
 
 void printNeuron(neuron_ptr n) {
-    printf("\tNeuron with %d inputs. Weights: [", n->inputs);
+    printf("\tNeuron with %d ", n->inputs);
+    if (n->inputs == 1) {
+        printf("input. ");
+    } else {
+        printf("inputs. ");
+    }
+    printf("Bias: %.2f. Weights: [", n->bias);
     for (int i=0;i<n->inputs;i++) {
         if (i == n->inputs-1) {
             printf("%.2f", n->weights[i]);

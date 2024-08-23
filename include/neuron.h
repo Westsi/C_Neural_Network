@@ -8,6 +8,7 @@ typedef struct NEURON {
     int inputs;
     float* weights;
     float bias;
+    float calculatedInput;
 } neuron_t;
 
 typedef neuron_t* neuron_ptr;

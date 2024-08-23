@@ -17,7 +17,18 @@ typedef struct LAYER {
 
 typedef layer_t* layer_ptr;
 
-layer_ptr newLayer(activation_func_t act, int previousLayerNeurons, int layerNeurons, int layerType);
+typedef struct INPUTLAYER {
+    int layerCnt;
+    float* data;
+} input_layer_t;
+
+typedef input_layer_t* input_layer_ptr;
+
+void* newLayer(activation_func_t act, int previousLayerNeurons, int layerNeurons, int layerType);
 void printLayer(layer_ptr layer);
+void printInputLayer(input_layer_ptr layer);
+
+void loadInputData(input_layer_ptr inp, float* data);
+float* computeLayer(float* prevLayerData, layer_ptr layer);
 
 #endif
