@@ -64,14 +64,57 @@ float* forwardPass(network_ptr net) {
 void backprop(network_ptr net, float y) {
     // go back one layer
     // derivative of cost function wrt activation of output neuron(s)
-    cost_deriv_t cder = getCostDerivative(net->cost);
+    // cost_deriv_t cder = getCostDerivative(net->cost);
     // derivative of activation function wrt to input to activation function (z)
-    activation_deriv_t ader = getActivationDerivative(net->output->activation);
+    // activation_deriv_t ader = getActivationDerivative(net->output->activation);
     // derivative of z wrt to the weight, which comes out to the activation of the layer before
-    float zder = net->hidden[net->hiddenCnt-1]->neurons[0]->value;
+    // float zder = net->hidden[net->hiddenCnt-1]->neurons[0]->value;
 
-    float overallder = zder * ader(net->output->neurons[0]->calculatedInput) * cder(net->output->neurons[0]->value, y);
-    printf("∂C/∂w(L) = %.4f\n", overallder);
+    // float overallder = zder * ader(net->output->neurons[0]->calculatedInput) * cder(net->output->neurons[0]->value, y);
+    // float biasder = ader(net->output->neurons[0]->calculatedInput) * cder(net->output->neurons[0]->value, y);
+
+    // printf("∂C/∂w(L) = %.4f\n∂C/∂b(L) = %.4f\n", overallder, biasder);
     // apply change to weight
-    net->output->neurons[0]->weights[0] += -overallder;
+    // net->output->neurons[0]->weights[0] += -overallder;
+    // net->output->neurons[0]->bias += -biasder;
+
+    int nlayers = net->hiddenCnt + 1;
+    layer_ptr layers[nlayers];
+    int ind = 1;
+    layers[0] = net->output;
+    for (int i=net->hiddenCnt-1;i>=0;i--) {
+        layers[ind++] = net->hidden[i];
+    }
+
+    float chainedDer = getCostDerivative(net->cost)(net->output->neurons[0]->value, y);
+
+    for (int i=0;i<nlayers;i++) {
+        activation_deriv_t ader = getActivationDerivative(layers[i]->activation);
+        float adersum = 0;
+        for (int j=0;j<layers[i]->layerNeuronCnt;j++) {
+            float icd = chainedDer;
+            float fader = ader(layers[i]->neurons[j]->calculatedInput);
+            adersum += fader;
+            icd = icd * fader;
+            // at this point, icd is cder * ader so is ∂C wrt ∂b(L)_n
+            printf("∂C/∂b(%d)_%d = %.4f\n", nlayers-i, j, icd);
+            layers[i]->neurons[j]->bias += -icd;
+            for (int w=0;w<layers[i]->neurons[j]->inputs;w++) {
+                float wicd = icd;
+                if (i == nlayers-1) {
+                    // idfk for now just breaking 
+                    // this means these are the weights from input to first hidden
+                    break;
+                }
+                // ∂C/∂w(L)_jk = a(L-1)_k
+                wicd *= layers[i+1]->neurons[w]->value;
+                // apply this to the weight
+                printf("∂C/∂w(%d)_%d<-%d = %.4f\n", nlayers-i, j, w, wicd);
+                layers[i]->neurons[j]->weights[w] += -wicd;
+            }
+
+        }
+        // how to do this for multi neuron per layer networks? just sum aders?
+        chainedDer *= adersum;
+    }
 }

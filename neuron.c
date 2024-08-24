@@ -24,7 +24,7 @@ neuron_ptr newNeuron(activation_func_t act, int numInputs) {
     dest->value = 0;
     dest->weights = weightsarr;
     dest->inputs = numInputs;
-    dest->bias = 0;
+    dest->bias = 0.1;
 
     return dest;
 }
@@ -47,7 +47,7 @@ void printNeuron(neuron_ptr n) {
     } else {
         printf("inputs. ");
     }
-    printf("Bias: %.2f. Weights: [", n->bias);
+    printf("Bias: %.4f. Value: %.4f. Calculated Input: %.4f. Weights: [", n->bias, n->value, n->calculatedInput);
     for (int i=0;i<n->inputs;i++) {
         if (i == n->inputs-1) {
             printf("%.2f", n->weights[i]);
