@@ -97,7 +97,7 @@ void backprop(network_ptr net, float y) {
             adersum += fader;
             icd = icd * fader;
             // at this point, icd is cder * ader so is ∂C wrt ∂b(L)_n
-            printf("∂C/∂b(%d)_%d = %.4f\n", nlayers-i, j, icd);
+            // printf("∂C/∂b(%d)_%d = %.4f\n", nlayers-i, j, icd);
             layers[i]->neurons[j]->bias += -icd;
             for (int w=0;w<layers[i]->neurons[j]->inputs;w++) {
                 float wicd = icd;
@@ -109,12 +109,12 @@ void backprop(network_ptr net, float y) {
                 // ∂C/∂w(L)_jk = a(L-1)_k
                 wicd *= layers[i+1]->neurons[w]->value;
                 // apply this to the weight
-                printf("∂C/∂w(%d)_%d<-%d = %.4f\n", nlayers-i, j, w, wicd);
+                // printf("∂C/∂w(%d)_%d<-%d = %.4f\n", nlayers-i, j, w, wicd);
                 layers[i]->neurons[j]->weights[w] += -wicd;
             }
 
         }
-        // how to do this for multi neuron per layer networks? just sum aders?
+        // is this correct method?
         chainedDer *= adersum;
     }
 }

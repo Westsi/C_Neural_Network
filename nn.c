@@ -9,28 +9,28 @@
 
 int main() {
     initNN();
-    // network_ptr network = newNetwork(newLayer(linear, -1, 2, INPUT_LAYER), 
-    //                                  newLayer(sigmoid, 1, 1, OUTPUT_LAYER), 
-    //                                  mse, 2, 
-    //                                  newLayer(sigmoid, 2, 2, HIDDEN_LAYER), 
-    //                                  newLayer(sigmoid, 2, 1, HIDDEN_LAYER));
-    network_ptr network = newNetwork(newLayer(linear, -1, 1, INPUT_LAYER), 
+    network_ptr network = newNetwork(newLayer(linear, -1, 10, INPUT_LAYER), 
                                      newLayer(sigmoid, 1, 1, OUTPUT_LAYER), 
                                      mse, 2, 
-                                     newLayer(sigmoid, 1, 1, HIDDEN_LAYER), 
-                                     newLayer(sigmoid, 1, 1, HIDDEN_LAYER));
+                                     newLayer(sigmoid, 8, 8, HIDDEN_LAYER), 
+                                     newLayer(sigmoid, 6, 6, HIDDEN_LAYER));
+    // network_ptr network = newNetwork(newLayer(linear, -1, 1, INPUT_LAYER), 
+    //                                  newLayer(sigmoid, 1, 1, OUTPUT_LAYER), 
+    //                                  mse, 2, 
+    //                                  newLayer(sigmoid, 1, 1, HIDDEN_LAYER), 
+    //                                  newLayer(sigmoid, 1, 1, HIDDEN_LAYER));
     printNetwork(network);
-    // float inp[2] = {0.7, 0.3};
-    float inp[1] = {0.7};
-    float y[1] = {0.6};
+    float inp[10] = {0.7, 0.3, 0.8, 0.21, 0.1, 0.6, 0.7, 0.3, 0.323, 0.0};
+    float y[1] = {0.3971};
     loadInputData(network->input, inp);
-    for (int i=0;i<500;i++) {
+    for (int i=0;i<2500;i++) {
+        printf("Epoch %d\n", i);
         float* result = forwardPass(network);
         for (int i=0;i<network->output->layerNeuronCnt;i++) {
-            printf("Neuron %d: %.3f", i, result[i]);
+            printf("Neuron %d: %.4f", i, result[i]);
         }
         printf("\n");
-        printf("Cost: %.3f\n", network->cost(result, y, 1));
+        printf("Cost: %.4f\n", network->cost(result, y, 1));
         backprop(network, y[0]);
     }
     printNetwork(network);
