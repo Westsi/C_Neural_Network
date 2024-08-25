@@ -24,6 +24,11 @@ network_ptr newNetwork(input_layer_ptr input, layer_ptr output, cost_func_t cost
         hiddenarray[i] = va_arg(ptr, layer_ptr);
     }
     va_end(ptr);
+
+    if (cost == categorical_cross_entropy && !dest->output->actIsSoftmax) {
+        printf("ERROR!\nCategorical Cross Entropy Loss used but output does not use softmax activation!\n\n\n\n");
+        exit(1);
+    }
     return dest;
 }
 
