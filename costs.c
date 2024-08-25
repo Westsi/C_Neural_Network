@@ -86,27 +86,43 @@ cost_deriv_t getCostDerivative(cost_func_t costfn) {
     
 }
 
-float deriv_mse(float pred, float actual) {
-    float res = 2 * (pred - actual);
+float deriv_mse(float pred, float actual, float outputCnt) {
+    float res = (2 / outputCnt) * (pred - actual);
     return res;
 }
 
-float deriv_mae(float pred, float actual) {
-
+float deriv_mae(float pred, float actual, float outputCnt) {
+    if (pred > actual) return 1.0;
+    if (pred == actual) return 0.0001; // return a very very small value. does this need to be changed to 0?
+    return -1;
 }
 
-float deriv_binary_cross_entropy(float pred, float actual) {
+// trusting ChatGPT for the below derivatives
 
+float deriv_binary_cross_entropy(float pred, float actual, float outputCnt) {
+    float num = pred - actual;
+    float denom = pred * (1 - pred);
+    return num/denom;
 }
 
-float deriv_categorical_cross_entropy(float pred, float actual) {
-
+// this assumes that actual is a member of a one-hot encoded vector
+float deriv_categorical_cross_entropy(float pred, float actual, float outputCnt) {
+    if (actual == 1) {
+        return pred - 1;
+    }
+    return pred;
 }
 
-float deriv_hinge(float pred, float actual) {
-
+float deriv_hinge(float pred, float actual, float outputCnt) {
+    float v = 1 - (pred * actual);
+    if (v > 0) return -actual;
+    return 0;
 }
 
-float deriv_huber(float pred, float actual) {
-
+float deriv_huber(float pred, float actual, float outputCnt) {
+    float error = actual - pred;
+    if (fabsf(error) <= HUBER_DELTA) return -error;
+    float sign = 1;
+    if (error < 0) sign = -1;
+    return -HUBER_DELTA * sign;
 }

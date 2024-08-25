@@ -10,6 +10,7 @@
 
 typedef struct LAYER {
     activation_func_t activation;
+    int actIsSoftmax;
     int layerNeuronCnt;
     int layerType;
     neuron_ptr* neurons;
@@ -30,5 +31,6 @@ void printInputLayer(input_layer_ptr layer);
 
 void loadInputData(input_layer_ptr inp, float* data);
 float* computeLayer(float* prevLayerData, layer_ptr layer);
+float* computeSoftmaxLayer(float* prevLayerData, layer_ptr layer);
 
 #endif

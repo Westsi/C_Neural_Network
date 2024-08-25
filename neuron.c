@@ -30,14 +30,19 @@ neuron_ptr newNeuron(activation_func_t act, int numInputs) {
 }
 
 float calculateNeuronValue(neuron_ptr n, float* inputs) {
+    float v = calculateNeuronInput(n, inputs);
+    float a = n->activation(v);
+    n->value = a;
+    return a;
+}
+
+float calculateNeuronInput(neuron_ptr n, float* inputs) {
     float v = n->bias;
     for (int i=0;i<n->inputs;i++) {
         v += inputs[i] * n->weights[i];
     }
     n->calculatedInput = v;
-    float a = n->activation(v);
-    n->value = a;
-    return a;
+    return v;
 }
 
 void printNeuron(neuron_ptr n) {

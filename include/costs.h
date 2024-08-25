@@ -12,15 +12,15 @@ float categorical_cross_entropy(float* pred, float* actual, int size);
 float hinge(float* pred, float* actual, int size);
 float huber(float* pred, float* actual, int size);
 
-typedef float (*cost_deriv_t)(float, float);
+typedef float (*cost_deriv_t)(float, float, float);
 
 cost_deriv_t getCostDerivative(cost_func_t costfn);
 
-float deriv_mse(float pred, float actual);
-float deriv_mae(float pred, float actual);
-float deriv_binary_cross_entropy(float pred, float actual);
-float deriv_categorical_cross_entropy(float pred, float actual);
-float deriv_hinge(float pred, float actual);
-float deriv_huber(float pred, float actual);
+float deriv_mse(float pred, float actual, float outputCnt);
+float deriv_mae(float pred, float actual, float outputCnt);
+float deriv_binary_cross_entropy(float pred, float actual, float outputCnt);
+float deriv_categorical_cross_entropy(float pred, float actual, float outputCnt);
+float deriv_hinge(float pred, float actual, float outputCnt);
+float deriv_huber(float pred, float actual, float outputCnt);
 
 #endif

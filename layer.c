@@ -15,6 +15,10 @@ void* newLayer(activation_func_t act, int previousLayerNeurons, int layerNeurons
         dest->data = inpData;
         return dest;
     }
+    int actisSoft = 0;
+    if (act == softmax) {
+        actisSoft = 1;
+    }
     layer_ptr dest = malloc(sizeof(layer_t));
     registerAllocated(dest);
     neuron_ptr* neurons = malloc(sizeof(neuron_ptr) * layerNeurons);
@@ -22,6 +26,7 @@ void* newLayer(activation_func_t act, int previousLayerNeurons, int layerNeurons
     int cnt = 0;
 
     dest->activation = act;
+    dest->actIsSoftmax = actisSoft;
     dest->layerNeuronCnt = layerNeurons;
     dest->layerType = layerType;
 
@@ -81,6 +86,23 @@ float* computeLayer(float* prevLayerData, layer_ptr layer) {
     }
     for (int i=0;i<layer->layerNeuronCnt;i++) {
         layervals[i] = calculateNeuronValue(layer->neurons[i], prevLayerData);
+    }
+    return layervals;
+}
+
+float* computeSoftmaxLayer(float* prevLayerData, layer_ptr layer) {
+    float* layervals = malloc(sizeof(float) * layer->layerNeuronCnt);
+    if (layer->layerType == OUTPUT_LAYER) {
+        registerAllocated(layervals); // only if output because otherwise freed in other function
+    }
+
+    for (int i=0;i<layer->layerNeuronCnt;i++) {
+        layervals[i] = calculateNeuronInput(layer->neurons[i], prevLayerData);
+    }
+    softmax(layervals, layer->layerNeuronCnt);
+
+    for (int i=0;i<layer->layerNeuronCnt;i++) {
+        layer->neurons[i]->value = layervals[i];
     }
     return layervals;
 }

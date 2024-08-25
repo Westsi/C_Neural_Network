@@ -17,6 +17,6 @@ network_ptr newNetwork(input_layer_ptr input, layer_ptr output, cost_func_t cost
 void printNetwork(network_ptr network);
 void initNN();
 float* forwardPass(network_ptr net);
-void backprop(network_ptr net, float y);
+void backprop(network_ptr net, float* y);
 
 #endif
