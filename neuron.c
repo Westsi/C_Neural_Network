@@ -3,13 +3,12 @@
 #include "memtrack.h"
 #include <stdio.h>
 
-// the distance from 0 on either side that weights are initialised to (e.g. from -1 to 1 this would be 1)
 #define RANDOMIZED_ZERO_DIST 1.0
 
-// Randomize weights with values from -1 to 1 inclusive
 void randomizeWeights(float* weights, int size) {
+    float std = sqrtf(2.0/(float)size);
     for (int i=0;i<size;i++) {
-        weights[i] = ((float)rand()/(float)RAND_MAX * (RANDOMIZED_ZERO_DIST*2)) - RANDOMIZED_ZERO_DIST;
+        weights[i] = (((float)rand()/(float)RAND_MAX * (RANDOMIZED_ZERO_DIST*2)) - RANDOMIZED_ZERO_DIST) * std;
     }
 }
 

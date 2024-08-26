@@ -6,33 +6,59 @@
 #include "activations.h"
 #include "memtrack.h"
 #include "network.h"
+#include "mnistreader.h"
+
+float** trainingData;
+float** oneHotTrainingLabels;
+float** testData;
+float** oneHotTestLabels;
+
+batched_data_t mnistTrainingBatcher(int nextN) {
+    static int index = 0;
+    batched_data_t r;
+    r.inputs = trainingData + (index);
+    r.outputs = oneHotTrainingLabels + (index);
+    r.numBatched = nextN;
+    if (index + nextN > 60000) {
+        r.numBatched = 60000 - index;
+        index = 0;
+    } else {
+        index += nextN;
+    }
+    return r;
+}
+
+batched_data_t mnistTestBatcher(int nextN) {
+    static int index = 0;
+    batched_data_t r;
+    r.inputs = testData + (index);
+    r.outputs = oneHotTestLabels + (index);
+    r.numBatched = nextN;
+    if (index + nextN > 10000) {
+        r.numBatched = 10000 - index;
+        index = 0;
+    } else {
+        index += nextN;
+    }
+    return r;
+}
 
 int main() {
+    initMnist();
+    trainingData = readTrainingData();
+    testData = readTestData();
+    oneHotTrainingLabels = oneHotEncode(readTrainingLabels(), 60000, 10);
+    oneHotTestLabels = oneHotEncode(readTestLabels(), 10000, 10);
     initNN();
-    network_ptr network = newNetwork(newLayer(linear, -1, 10, INPUT_LAYER), 
-                                     newLayer(softmax, 6, 6, OUTPUT_LAYER), 
-                                     mse, 2, 
-                                     newLayer(sigmoid, 10, 8, HIDDEN_LAYER), 
-                                     newLayer(sigmoid, 8, 6, HIDDEN_LAYER));
-    printNetwork(network);
-    float inp[10] = {0.7, 0.3, 0.8, 0.21, 0.1, 0.6, 0.3, 0.323, 0.0, 1.0};
-    // float y[6] = {0.3971, 0.8, 0.1, 0.72, 0.8, 0.91};
-    float y[6] = {0.2433, 0.12, 0.07, 0.158, 0.11, 0.2826};
-    loadInputData(network->input, inp);
-    for (int i=0;i<2500;i++) {
-        printf("Epoch %d\n", i);
-        float* result = forwardPass(network);
-        for (int i=0;i<network->output->layerNeuronCnt;i++) {
-            printf("Neuron %d: %.4f\n", i, result[i]);
-        }
-        printf("Cost: %.4f\n", network->cost(result, y, sizeof(y)/sizeof(y[0])));
-        backprop(network, y);
-    }
-    printNetwork(network);
-    for (int i=0;i<network->output->layerNeuronCnt;i++) {
-            printf("Neuron %d: %.4f\n", i, network->output->neurons[i]->value);
-        }
+    network_ptr network = newNetwork(newLayer(linear, -1, 784, INPUT_LAYER), 
+                                     newLayer(softmax, 128, 10, OUTPUT_LAYER), 
+                                     categorical_cross_entropy, 1, 
+                                     newLayer(relu, 784, 128, HIDDEN_LAYER));
+    // printNetwork(network);
+    train(network, 6, mnistTrainingBatcher, mnistTestBatcher, 0.001);
+    // printNetwork(network);
     freeAll();
+    closeAll();
 }
 
 /*

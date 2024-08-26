@@ -1,7 +1,7 @@
 #include "memtrack.h"
 #include <stdlib.h>
 
-void* allocated[65536];
+void* allocated[MEMTRACK_SIZE];
 int allocedCnt = 0;
 
 void registerAllocated(void* alloced) {

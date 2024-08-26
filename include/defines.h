@@ -1,0 +1,9 @@
+#ifndef USER_DEFINES_H_
+#define USER_DEFINES_H_
+
+#define BATCH_SIZE 128
+#define NUM_OUTPUTS 10
+#define TRAINING_SIZE 60000
+#define TEST_SIZE 10000
+
+#endif

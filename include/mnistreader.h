@@ -4,12 +4,12 @@
 #include <stdint.h>
 
 
-void init();
-uint32_t* readTrainingLabels();
-uint32_t** readTrainingData();
+void initMnist();
+uint8_t* readTrainingLabels();
+float** readTrainingData();
 
-uint32_t* readTestLabels();
-uint32_t** readTestData();
+uint8_t* readTestLabels();
+float** readTestData();
 void closeAll();
 
 #endif

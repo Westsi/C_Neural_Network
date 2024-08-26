@@ -34,7 +34,9 @@ float binary_cross_entropy(float* pred, float* actual, int size) {
 float categorical_cross_entropy(float* pred, float* actual, int size) {
     float sum = 0;
     for (int i=0;i<size;i++) {
-        sum += actual[i] * logf(pred[i]);
+        if (actual[i] == 0) continue;
+        float v = pred[i] + 0.5;
+        sum += actual[i] * logf(v);
     }
     return -sum;
 }
@@ -83,7 +85,6 @@ cost_deriv_t getCostDerivative(cost_func_t costfn) {
     if (costfn == huber) {
         return deriv_huber;
     }
-    
 }
 
 float deriv_mse(float pred, float actual, float outputCnt) {
