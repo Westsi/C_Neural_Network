@@ -1,0 +1,6 @@
+C (mine)
+4m44s to get to 95.26% accuracy on validation (6 epochs)
+
+Tensorflow
+12s to get to 97.5% accuracy on validation (6 epochs)
+I think its multithreaded.
