@@ -4,3 +4,7 @@ C (mine)
 Tensorflow
 12s to get to 97.5% accuracy on validation (6 epochs)
 I think its multithreaded.
+
+TODO:
+    implement multithreading
+    implement gpu support
