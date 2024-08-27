@@ -39,6 +39,6 @@ model.compile(
 
 model.fit(
     ds_train,
-    epochs=6,
+    epochs=10,
     validation_data=ds_test,
 )
