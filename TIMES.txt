@@ -1,5 +1,8 @@
 C (mine)
 4m44s to get to 95.26% accuracy on validation (6 epochs)
+-Ofast 24s to get 95% accuracy
+-O3 48s to get 95.6% accuracy
+-O2 59s to get 95.8% accuracy
 
 Tensorflow
 12s to get to 97.5% accuracy on validation (6 epochs)

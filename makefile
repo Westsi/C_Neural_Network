@@ -2,7 +2,10 @@ CFILES:=$(shell find -L . -type f -name '*.c')
 .PHONY: all clean
 
 all: clean
-	gcc $(CFILES) -o cnn -Iinclude/ -lm
+	gcc $(CFILES) -o cnn -Iinclude/ -lm -O3
+
+fast: clean
+	gcc $(CFILES) -o cnn -Iinclude/ -lm -Ofast
 
 clean:
 	rm -rf ./cnn
