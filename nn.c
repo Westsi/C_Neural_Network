@@ -43,7 +43,31 @@ batched_data_t mnistTestBatcher(int nextN) {
     return r;
 }
 
+void valgrindCheck() {
+    network_ptr network = newNetwork(newLayer(linear, -1, 10, INPUT_LAYER), 
+                                     newLayer(softmax, 4, 2, OUTPUT_LAYER), 
+                                     mse, 2, 
+                                     newLayer(sigmoid, 10, 8, HIDDEN_LAYER),
+                                     newLayer(sigmoid, 8, 4, HIDDEN_LAYER));
+    float x[10] = {0.5, 0.6, 0.3, 0.89, 0.1, 0.0, 0.9, 0.56, 0.39, 0.2};
+    float y[2] = {0.32, 0.68};
+    for (int i=0;i<10;i++) {
+        loadInputData(network->input, x);
+        float* result = forwardPass(network);
+        float cost = network->cost(result, y, 2);
+        printf("1: %.4f, 2: %.4f\n", result[0], result[1]);
+        printf("Cost of Epoch %d: %.4f\n", i, cost);
+        backprop(network, y, 1);
+    }
+    printNetwork(network);
+    freeAll();
+}
+
 int main() {
+    #ifdef VALGRIND
+        valgrindCheck();
+        return;
+    #endif
     initMnist();
     trainingData = readTrainingData();
     testData = readTestData();
@@ -56,7 +80,6 @@ int main() {
                                      newLayer(relu, 784, 128, HIDDEN_LAYER));
     // printNetwork(network);
     train(network, 6, mnistTrainingBatcher, mnistTestBatcher, 0.001);
-    // printNetwork(network);
     freeAll();
     closeAll();
 }

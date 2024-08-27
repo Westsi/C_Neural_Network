@@ -153,10 +153,14 @@ float* forwardPass(network_ptr net) {
             data = retdata;
         }
     }
+    float* rval;
     if (net->output->actIsSoftmax) {
-        return computeSoftmaxLayer(data, net->output);
+        rval = computeSoftmaxLayer(data, net->output);
+    } else {
+        rval = computeLayer(data, net->output);
     }
-    return computeLayer(data, net->output);
+    free(data);
+    return rval;
 }
 
 void backprop_v1(network_ptr net, float* y) {

@@ -2,10 +2,14 @@ CFILES:=$(shell find -L . -type f -name '*.c')
 .PHONY: all clean
 
 all: clean
-	clang $(CFILES) -o cnn -Iinclude/ -lm
+	gcc $(CFILES) -o cnn -Iinclude/ -lm
 
 clean:
 	rm -rf ./cnn
 
 asm:
-	clang -S $(CFILES) -Iinclude/
+	gcc -S $(CFILES) -Iinclude/
+
+check:
+	gcc $(CFILES) -o cnn -Iinclude/ -lm -Og -ggdb3 -DVALGRIND
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --log-file=valgrind-out.txt ./cnn
