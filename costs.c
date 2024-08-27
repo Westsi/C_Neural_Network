@@ -34,8 +34,7 @@ float binary_cross_entropy(float* pred, float* actual, int size) {
 float categorical_cross_entropy(float* pred, float* actual, int size) {
     float sum = 0;
     for (int i=0;i<size;i++) {
-        if (actual[i] == 0) continue;
-        float v = pred[i] + 0.5;
+        float v = pred[i] + 1e-15;
         sum += actual[i] * logf(v);
     }
     return -sum;
