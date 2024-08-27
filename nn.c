@@ -79,7 +79,7 @@ int main() {
                                      categorical_cross_entropy, 1, 
                                      newLayer(relu, 784, 128, HIDDEN_LAYER));
     // printNetwork(network);
-    train(network, 6, mnistTrainingBatcher, mnistTestBatcher, 0.001);
+    train(network, 6, mnistTrainingBatcher, mnistTestBatcher, 0.01);
     freeAll();
     closeAll();
 }
