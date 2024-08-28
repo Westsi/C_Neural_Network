@@ -69,7 +69,7 @@ float deriv_logistic(float a) {
 
 float deriv_a_tanh(float a) {
     float tanh_a = a_tanh(a);
-    float res = 1.0 - powf(tanh_a, 2);
+    float res = 1.0 - (tanh_a*tanh_a);
     return res;
 }
 
