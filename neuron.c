@@ -37,6 +37,7 @@ float calculateNeuronValue(neuron_ptr n, float* inputs) {
 
 float calculateNeuronInput(neuron_ptr n, float* inputs) {
     float v = n->bias;
+    // TODO: gpu multithread this loop
     for (int i=0;i<n->inputs;i++) {
         v += inputs[i] * n->weights[i];
     }

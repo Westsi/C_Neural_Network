@@ -18,6 +18,6 @@ check:
 	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --log-file=valgrind-out.txt ./cnn
 
 prof: clean
-	gcc $(CFILES) -o cnn -Iinclude/ -lm -Ofast -Wno-incompatible-function-pointer-types -pg -lpthread
+	gcc $(CFILES) -o cnn -Iinclude/ -lm -Ofast -Wno-incompatible-function-pointer-types -pg -g -lpthread
 	./cnn
-	gprof ./cnn ./gmon.out > gmon.txt
+	gprof ./cnn ./gmon.out -l > gmon.txt

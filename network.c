@@ -298,12 +298,12 @@ void backprop(network_ptr net, float* y, float lr) {
     // Backpropagate through hidden layers
     for (int i = 0; i < nlayers; i++) {
         layer_ptr curr_layer = layers[i];
-        layer_ptr prev_layer = (i == 0) ? NULL : layers[i - 1];
         activation_deriv_t ader = getActivationDerivative(curr_layer->activation);
 
         float* nextChainedDer = (i < nlayers - 1) ? (float*)malloc(layers[i + 1]->layerNeuronCnt * sizeof(float)) : NULL;
 
         // Compute deltas for the current layer
+        // TODO: gpu multithread this loop
         for (int j = 0; j < curr_layer->layerNeuronCnt; j++) {
             float icd = chainedDer[j];
             float fader = ader(curr_layer->neurons[j]->calculatedInput);
@@ -311,7 +311,6 @@ void backprop(network_ptr net, float* y, float lr) {
 
             // Update the bias
             curr_layer->neurons[j]->bias -= icd * lr;
-
             for (int w = 0; w < curr_layer->neurons[j]->inputs; w++) {
                 float wicd = icd;
                 if (i == nlayers - 1) {
