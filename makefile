@@ -49,7 +49,7 @@ check: clean $(TARGET)
 
 prof: CFLAGS += $(PROFFLAGS)
 prof: NVCCFLAGS += $(PROFFLAGS)
-prof: NVCCFLAGS += -lineinfo
+# prof: NVCCFLAGS += -lineinfo
 prof: clean $(TARGET)
 	./$(TARGET)
 	gprof ./$(TARGET) ./gmon.out -l > gmon.txt
