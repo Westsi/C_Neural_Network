@@ -1,8 +1,8 @@
-CFILES:=$(shell find -L . -type f -name '*.c')
+CFILES:=$(shell find -L . -type f -name '*.c' | grep -v "./venv/")
 .PHONY: all clean
 
 all: clean
-	gcc $(CFILES) -o cnn -Iinclude/ -lm -O3
+	gcc $(CFILES) -o cnn -Iinclude/ -lm -O3 -Wno-incompatible-function-pointer-types
 
 fast: clean
 	gcc $(CFILES) -o cnn -Iinclude/ -lm -Ofast

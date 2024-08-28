@@ -1,5 +1,8 @@
 import tensorflow as tf
 import tensorflow_datasets as tfds
+import os
+
+os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 
 (ds_train, ds_test), ds_info = tfds.load(
     'mnist',
@@ -39,6 +42,6 @@ model.compile(
 
 model.fit(
     ds_train,
-    epochs=10,
+    epochs=6,
     validation_data=ds_test,
 )
