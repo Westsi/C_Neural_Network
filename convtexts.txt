@@ -1,0 +1,3 @@
+https://johnwlambert.github.io/conv-backprop/
+https://machinelearningmastery.com/convolutional-layers-for-deep-learning-neural-networks/
+https://www.tensorflow.org/api_docs/python/tf/keras/layers/Conv2D
