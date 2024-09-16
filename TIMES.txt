@@ -11,3 +11,10 @@ I think its multithreaded.
 TODO:
     implement multithreading
     implement gpu support
+
+
+Mine on MacOS: 7.25s user 0.08s system 98% cpu 7.439 total - 0.9814 E6, 0.9862 Peak
+TF First Run on MacOS: 11.83s user 2.80s system 86% cpu 16.965 total - 0.9742 E6, same peak
+TF Second Run on MacOS: 10.79s user 3.03s system 251% cpu 5.491 total - 0.9741 E6, same peak
+TF Second Run tells me that it uses multithreading, so mine is actually faster in terms of CPU time, and startup time from TF First Run.
+I am also more accurate, but for some reason my accuracy falls off in last epoch. The same is true for any n epochs, where the accuracy peaks in n-1 epoch.
