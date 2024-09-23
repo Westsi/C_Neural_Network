@@ -1,6 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+#include <string.h>
+
+#include <errno.h>
 
 #include "network.h"
 #include "memtrack.h"
@@ -43,6 +46,30 @@ void printNetwork(network_ptr network) {
     printf("Output Layer:\n");
     printLayer(network->output);
     printf("Cost Function: %p\n", network->cost);
+}
+
+void saveModel(network_ptr network, int epoch) {
+    // WOOO SEGFAULT!!!
+
+    const char* newLine = "\n";
+
+    char fname[32];
+    sprintf(fname, "saved_models/epoch_%d.model", epoch);
+    FILE* modelFile = fopen(fname, "wb");
+    if (modelFile == NULL) {
+        perror("Create saved_models directory: ");
+    }
+    for (int l=0;l<network->hiddenCnt;l++) {
+        for (int n=0;n<network->hidden[l]->layerNeuronCnt;n++) {
+            char debugInfo[128];
+            sprintf(debugInfo, "Hidden Layer %d, Neuron %d\n", l, n);
+            fwrite(debugInfo, sizeof(char), strlen(debugInfo), modelFile);
+            fwrite(network->hidden[l]->neurons[n]->weights, sizeof(float), network->hidden[l]->neurons[n]->inputs, modelFile);
+            fwrite(newLine, sizeof(char), strlen(newLine), modelFile);
+            fwrite((void*) &network->hidden[l]->neurons[n]->bias, sizeof(float), 1, modelFile);
+        }
+    }
+    fclose(modelFile);
 }
 
 void initNN() {
@@ -123,6 +150,7 @@ void train(network_ptr net, int epochs, data_callback_t trainData, data_callback
                 // if (d == 100) exit(1);
             }
         }
+        saveModel(net, i);
         // printf("BATCH LOSS: %.4f\n", batchCost);
         printf("\tLoss: %.4f - Accuracy: %.4f", (float)(batchCost/ (float)TRAINING_SIZE), (float)((float)batchCorrect / (float)TRAINING_SIZE));
         batched_data_t batchedTest = testData((int)(TEST_SIZE / epochs));

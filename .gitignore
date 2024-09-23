@@ -2,3 +2,4 @@
 /valgrind-out.txt
 venv/
 gmon*
+/saved_models/
