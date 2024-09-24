@@ -49,25 +49,56 @@ void printNetwork(network_ptr network) {
 }
 
 void saveModel(network_ptr network, int epoch) {
-    // WOOO SEGFAULT!!!
-
-    const char* newLine = "\n";
+    const char* newLine = "\n\n\n\n";
 
     char fname[32];
-    sprintf(fname, "saved_models/epoch_%d.model", epoch);
+    sprintf(fname, "saved_models/epoch_%d.cnw", epoch);
     FILE* modelFile = fopen(fname, "wb");
     if (modelFile == NULL) {
         perror("Create saved_models directory: ");
     }
     for (int l=0;l<network->hiddenCnt;l++) {
         for (int n=0;n<network->hidden[l]->layerNeuronCnt;n++) {
-            char debugInfo[128];
-            sprintf(debugInfo, "Hidden Layer %d, Neuron %d\n", l, n);
-            fwrite(debugInfo, sizeof(char), strlen(debugInfo), modelFile);
             fwrite(network->hidden[l]->neurons[n]->weights, sizeof(float), network->hidden[l]->neurons[n]->inputs, modelFile);
-            fwrite(newLine, sizeof(char), strlen(newLine), modelFile);
+            // fwrite(newLine, sizeof(char), strlen(newLine), modelFile);
             fwrite((void*) &network->hidden[l]->neurons[n]->bias, sizeof(float), 1, modelFile);
         }
+    }
+
+    for (int n=0;n<network->output->layerNeuronCnt;n++) {
+        fwrite(network->output->neurons[n]->weights, sizeof(float), network->output->neurons[n]->inputs, modelFile);
+        // fwrite(newLine, sizeof(char), strlen(newLine), modelFile);
+        fwrite((void*) &network->output->neurons[n]->bias, sizeof(float), 1, modelFile);
+    }
+    fclose(modelFile);
+}
+
+long calculateModelParamCount(network_ptr network) {
+    long siz = network->output->layerNeuronCnt * network->output->neurons[0]->inputs + 1;
+    for (int l=0;l<network->hiddenCnt;l++) {
+        siz += (network->hidden[l]->neurons[0]->inputs + 1) * network->hidden[l]->layerNeuronCnt;
+    }
+    return siz;
+}
+
+void loadModel(network_ptr network, int epoch) {
+    char fname[32];
+    sprintf(fname, "saved_models/epoch_%d.cnw", epoch);
+    FILE* modelFile = fopen(fname, "rb");
+    if (modelFile == NULL) {
+        perror("Error opening file: ");
+    }
+
+    for (int l=0;l<network->hiddenCnt;l++) {
+        for (int n=0;n<network->hidden[l]->layerNeuronCnt;n++) {
+            fread(network->hidden[l]->neurons[n]->weights, sizeof(float), network->hidden[l]->neurons[n]->inputs, modelFile);
+            fread((void*) &network->hidden[l]->neurons[n]->bias, sizeof(float), 1, modelFile);
+        }
+    }
+
+    for (int n=0;n<network->output->layerNeuronCnt;n++) {
+        fread(network->output->neurons[n]->weights, sizeof(float), network->output->neurons[n]->inputs, modelFile);
+        fread((void*) &network->output->neurons[n]->bias, sizeof(float), 1, modelFile);
     }
     fclose(modelFile);
 }
@@ -91,11 +122,11 @@ int isCorrect(float* pred, float* act, int size) {
     return 0;
 }
 
-void train(network_ptr net, int epochs, data_callback_t trainData, data_callback_t testData, float lr) {
+void train(network_ptr net, int startepoch, int epochs, data_callback_t trainData, data_callback_t testData, float lr) {
     int batchCnt = (int)TRAINING_SIZE/BATCH_SIZE + 1;
-    // int batchCnt = 2;
-    for (int i=0;i<epochs;i++) {
-        printf("\nEpoch %d/%d\n", i+1, epochs);
+    int totepochs = startepoch + epochs;
+    for (int i=startepoch;i<totepochs;i++) {
+        printf("\nEpoch %d/%d\n", i+1, totepochs);
         // batches
         printf("\tBatch 000/000");
 
@@ -150,7 +181,7 @@ void train(network_ptr net, int epochs, data_callback_t trainData, data_callback
                 // if (d == 100) exit(1);
             }
         }
-        saveModel(net, i);
+        saveModel(net, i+1);
         // printf("BATCH LOSS: %.4f\n", batchCost);
         printf("\tLoss: %.4f - Accuracy: %.4f", (float)(batchCost/ (float)TRAINING_SIZE), (float)((float)batchCorrect / (float)TRAINING_SIZE));
         batched_data_t batchedTest = testData((int)(TEST_SIZE / epochs));

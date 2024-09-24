@@ -25,8 +25,10 @@ typedef batched_data_t (*data_callback_t) (int);
 
 network_ptr newNetwork(input_layer_ptr input, layer_ptr output, cost_func_t cost, int hiddenCnt, ...);
 void printNetwork(network_ptr network);
-void saveNetwork(network_ptr network, int epoch);
-void train(network_ptr net, int epochs, data_callback_t trainData, data_callback_t testData, float lr);
+void saveModel(network_ptr network, int epoch);
+void loadModel(network_ptr network, int epoch);
+long calculateModelParamCount(network_ptr network);
+void train(network_ptr net, int startepoch, int epochs, data_callback_t trainData, data_callback_t testData, float lr);
 void initNN();
 float* forwardPass(network_ptr net);
 void backprop(network_ptr net, float* y, float lr);
