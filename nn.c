@@ -63,25 +63,80 @@ void valgrindCheck() {
     freeAll();
 }
 
+float Lmul(float a, float b) {
+    uint32_t ba; // bits of float a
+    union
+    {
+        float f;
+        uint32_t u;
+    } converter;
+    converter.f = a;
+    ba = converter.u;
+
+    converter.f = b;
+    uint32_t sa, sb; // signs
+
+    
+    sa = ba & 0x80000000;
+    sb = converter.u & 0x80000000;
+
+    ba &= 0x7FFFFFFF;
+    converter.u &= 0x7FFFFFFF;
+    sa ^= sb;
+    converter.u += ba;
+    converter.u -= 0x3F780000;
+    converter.u &= 0x7FFFFFFF;
+    converter.u += sa;
+    float r = converter.f;
+    return r;
+}
+
 int main() {
     #ifdef VALGRIND
         valgrindCheck();
         return;
     #endif
-    initMnist();
-    trainingData = readTrainingData();
-    testData = readTestData();
-    oneHotTrainingLabels = oneHotEncode(readTrainingLabels(), 60000, 10);
-    oneHotTestLabels = oneHotEncode(readTestLabels(), 10000, 10);
-    initNN();
-    network_ptr network = newNetwork(newLayer(linear, -1, 784, INPUT_LAYER), 
-                                     newLayer(softmax, 128, 10, OUTPUT_LAYER), 
-                                     categorical_cross_entropy, 1, 
-                                     newLayer(relu, 784, 128, HIDDEN_LAYER));
-    // printNetwork(network);
-    train(network, 6, mnistTrainingBatcher, mnistTestBatcher, 0.01);
-    freeAll();
-    closeAll();
+    float a = 0.7323544f;
+    float b = 0.2212349f;
+    long niters = 100000000;
+
+    float r, mr;
+
+    clock_t lmul_start = clock();
+    for (long i=0;i<niters;i++) {
+        r = Lmul(a, b);
+    }
+    clock_t lmul_end = clock();
+
+    double lmultime = (double)(lmul_end - lmul_start) / CLOCKS_PER_SEC;
+
+    clock_t mul_start = clock();
+    for (long i=0;i<niters;i++) {
+        mr = a * b;
+    }
+    clock_t mul_end = clock();
+
+    double multime = (double)(mul_end - mul_start) / CLOCKS_PER_SEC;
+
+    float diffperc = (r-mr)/(mr) * 100;
+
+    float timeperc = (lmultime - multime)/(multime) * 100;
+    printf("Value Percentage Difference %.3f%%, \nLMUL Result %.6f, LMUL Time %.6fs, \nNormal Result %.6f, Normal Time %.6fs, \nTime Percentage Difference %.3f%%\n", 
+            diffperc, r, lmultime, mr, multime, timeperc);
+    // initMnist();
+    // trainingData = readTrainingData();
+    // testData = readTestData();
+    // oneHotTrainingLabels = oneHotEncode(readTrainingLabels(), 60000, 10);
+    // oneHotTestLabels = oneHotEncode(readTestLabels(), 10000, 10);
+    // initNN();
+    // network_ptr network = newNetwork(newLayer(linear, -1, 784, INPUT_LAYER), 
+    //                                  newLayer(softmax, 128, 10, OUTPUT_LAYER), 
+    //                                  categorical_cross_entropy, 1, 
+    //                                  newLayer(relu, 784, 128, HIDDEN_LAYER));
+    // // printNetwork(network);
+    // train(network, 6, mnistTrainingBatcher, mnistTestBatcher, 0.01);
+    // freeAll();
+    // closeAll();
 }
 
 /*

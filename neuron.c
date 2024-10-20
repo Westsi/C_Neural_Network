@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "memtrack.h"
 #include <stdio.h>
+#include <stdint.h>
 
 #define RANDOMIZED_ZERO_DIST 1.0
 

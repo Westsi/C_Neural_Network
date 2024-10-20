@@ -2,7 +2,7 @@ CFILES:=$(shell find -L . -type f -name '*.c' | grep -v "./venv/")
 .PHONY: all clean
 
 all: clean
-	gcc $(CFILES) -o cnn -Iinclude/ -lm -O3 -Wno-incompatible-function-pointer-types -lpthread
+	gcc $(CFILES) -o cnn -Iinclude/ -lm -Wno-incompatible-function-pointer-types -lpthread
 
 fast: clean
 	gcc $(CFILES) -o cnn -Iinclude/ -lm -Ofast -Wno-incompatible-function-pointer-types -lpthread
